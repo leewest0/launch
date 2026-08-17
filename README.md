@@ -45,12 +45,13 @@ Open [http://localhost:3000](http://localhost:3000), enter the team PIN and your
 
 1. Push this repository to GitHub (already done if you're reading this from the repo).
 2. Import the repository at [vercel.com/new](https://vercel.com/new).
-3. In the project's **Environment Variables** settings, add the same four variables from `.env.local`:
-   - `UPSTASH_REDIS_REST_URL`
-   - `UPSTASH_REDIS_REST_TOKEN`
-   - `TEAM_PIN`
-   - `SESSION_SECRET`
-4. Deploy. Vercel will build and host the app; every team member visits the same URL and signs in with the shared PIN.
+3. Connect a Redis store, either way works:
+   - **Already have an Upstash/Vercel KV database** (e.g. one named `kv-<something>` in your dashboard) — open the project's **Storage** tab and connect it. Vercel injects `KV_REST_API_URL` / `KV_REST_API_TOKEN` automatically; this app reads those as a fallback, so no renaming needed.
+   - **Starting fresh** — create a database at [console.upstash.com](https://console.upstash.com), then add `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` under **Settings → Environment Variables** yourself.
+4. Also add, under **Settings → Environment Variables**:
+   - `TEAM_PIN` — whatever PIN you want your team to use to get in.
+   - `SESSION_SECRET` — a long random string, e.g. `openssl rand -base64 32`.
+5. Deploy (or redeploy, if variables were added after the first build). Every team member visits the same URL and signs in with the shared PIN.
 
 Upstash Redis is already an HTTP-based, serverless-friendly database, so no extra networking configuration is needed for Vercel to reach it.
 

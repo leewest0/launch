@@ -5,12 +5,16 @@ let client: Redis | null = null;
 export function getRedis(): Redis {
   if (client) return client;
 
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  // UPSTASH_REDIS_REST_* is the name Upstash itself uses. KV_REST_API_* is what
+  // Vercel's Marketplace "Upstash"/KV integration injects when you connect an
+  // existing store from the Vercel dashboard instead of setting vars by hand.
+  const url = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
 
   if (!url || !token) {
     throw new Error(
-      "Missing UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN environment variables."
+      "Missing Redis credentials. Set UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN " +
+        "(or connect a Vercel KV/Upstash store, which sets KV_REST_API_URL / KV_REST_API_TOKEN)."
     );
   }
 

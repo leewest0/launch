@@ -14,7 +14,7 @@ export function ConfigNotice({ error }: { error: string }) {
           Set <code className="rounded bg-surface-hover px-1.5 py-0.5">UPSTASH_REDIS_REST_URL</code>{" "}
           and{" "}
           <code className="rounded bg-surface-hover px-1.5 py-0.5">UPSTASH_REDIS_REST_TOKEN</code>{" "}
-          in your environment, then reload.
+          in your environment (or connect a Vercel KV/Upstash store), then reload.
         </p>
         <p className="mt-4 text-xs text-muted/80 break-words">{error}</p>
       </div>
