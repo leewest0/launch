@@ -53,7 +53,7 @@ export function AppCard({
           />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="flex items-center gap-1 font-display text-sm font-semibold text-foreground">
+          <span className="flex items-center gap-1 pr-20 font-display text-sm font-semibold text-foreground">
             <span className="truncate">{app.name}</span>
             <ArrowUpRight
               size={13}
@@ -82,7 +82,7 @@ export function AppCard({
         </span>
       </button>
 
-      <div className="absolute top-3 right-3 flex items-center gap-1">
+      <div className="absolute top-3 right-3 flex items-center gap-2">
         <button
           type="button"
           onClick={() => onToggleFavourite(app)}
