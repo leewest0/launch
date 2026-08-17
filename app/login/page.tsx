@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import { getCurrentUser } from "@/lib/auth";
 import { LoginForm } from "@/components/login-form";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Rocket } from "lucide-react";
 
 export default async function LoginPage() {
   const user = await getCurrentUser();
@@ -18,8 +18,8 @@ export default async function LoginPage() {
 
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-accent-a to-accent-b text-white shadow-lg shadow-accent-b/20">
-            <Rocket size={22} strokeWidth={2.25} />
+          <div className="mb-5 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl shadow-lg shadow-black/10">
+            <Image src="/church-logo.png" alt="" width={56} height={56} className="h-full w-full object-cover" />
           </div>
           <h1 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             LaunchPad Dashboard

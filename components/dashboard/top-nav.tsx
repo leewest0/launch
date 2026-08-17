@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { LogOut, Plus, Rocket } from "lucide-react";
+import { LogOut, Plus } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 interface TopNavProps {
@@ -31,8 +32,8 @@ export function TopNav({ user, onAddClick }: TopNavProps) {
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-accent-a to-accent-b text-white">
-            <Rocket size={16} strokeWidth={2.25} />
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-xl">
+            <Image src="/church-logo.png" alt="" width={32} height={32} className="h-full w-full object-cover" />
           </span>
           <span className="font-display text-base font-bold tracking-tight text-foreground">
             LaunchPad
