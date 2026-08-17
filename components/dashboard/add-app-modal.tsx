@@ -2,8 +2,9 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Loader2, Plus, X } from "lucide-react";
+import { Loader2, Pencil, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { AppEntry } from "@/lib/types";
 
 export interface NewAppInput {
   name: string;
@@ -18,6 +19,7 @@ interface AddAppModalProps {
   onSubmit: (input: NewAppInput) => Promise<boolean>;
   existingCategories: string[];
   initialName?: string;
+  editingApp?: AppEntry | null;
 }
 
 export function AddAppModal({
@@ -26,6 +28,7 @@ export function AddAppModal({
   onSubmit,
   existingCategories,
   initialName,
+  editingApp,
 }: AddAppModalProps) {
   useEffect(() => {
     if (!open) return;
@@ -48,11 +51,12 @@ export function AddAppModal({
         >
           {/* Keyed so a fresh form (and fresh local state) mounts every time the modal opens. */}
           <AddAppForm
-            key={initialName ?? "blank"}
+            key={editingApp?.id ?? initialName ?? "blank"}
             onClose={onClose}
             onSubmit={onSubmit}
             existingCategories={existingCategories}
             initialName={initialName}
+            editingApp={editingApp}
           />
         </motion.div>
       )}
@@ -65,14 +69,22 @@ interface AddAppFormProps {
   onSubmit: (input: NewAppInput) => Promise<boolean>;
   existingCategories: string[];
   initialName?: string;
+  editingApp?: AppEntry | null;
 }
 
-function AddAppForm({ onClose, onSubmit, existingCategories, initialName }: AddAppFormProps) {
+function AddAppForm({
+  onClose,
+  onSubmit,
+  existingCategories,
+  initialName,
+  editingApp,
+}: AddAppFormProps) {
+  const isEditing = Boolean(editingApp);
   const [form, setForm] = useState<NewAppInput>({
-    name: initialName ?? "",
-    url: "",
-    category: "",
-    description: "",
+    name: editingApp?.name ?? initialName ?? "",
+    url: editingApp?.url ?? "",
+    category: editingApp?.category ?? "",
+    description: editingApp?.description ?? "",
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -96,7 +108,9 @@ function AddAppForm({ onClose, onSubmit, existingCategories, initialName }: AddA
       className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl"
     >
       <div className="mb-5 flex items-center justify-between">
-        <h2 className="font-display text-lg font-semibold text-foreground">Add an app</h2>
+        <h2 className="font-display text-lg font-semibold text-foreground">
+          {isEditing ? "Edit app" : "Add an app"}
+        </h2>
         <button
           type="button"
           onClick={onClose}
@@ -176,6 +190,11 @@ function AddAppForm({ onClose, onSubmit, existingCategories, initialName }: AddA
       >
         {submitting ? (
           <Loader2 size={16} className="animate-spin" />
+        ) : isEditing ? (
+          <>
+            <Pencil size={16} />
+            Save changes
+          </>
         ) : (
           <>
             <Plus size={16} />

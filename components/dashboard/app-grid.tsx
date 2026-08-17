@@ -9,6 +9,7 @@ interface AppGridProps {
   favouriteIds: Set<string>;
   onOpen: (app: AppEntry) => void;
   onToggleFavourite: (app: AppEntry) => void;
+  onEdit: (app: AppEntry) => void;
   onDelete: (app: AppEntry) => void;
   showCategory?: boolean;
 }
@@ -18,6 +19,7 @@ export function AppGrid({
   favouriteIds,
   onOpen,
   onToggleFavourite,
+  onEdit,
   onDelete,
   showCategory = true,
 }: AppGridProps) {
@@ -31,6 +33,7 @@ export function AppGrid({
             favourited={favouriteIds.has(app.id)}
             onOpen={onOpen}
             onToggleFavourite={onToggleFavourite}
+            onEdit={onEdit}
             onDelete={onDelete}
             showCategory={showCategory}
           />

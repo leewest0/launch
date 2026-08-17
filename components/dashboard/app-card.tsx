@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Star, Trash2, ArrowUpRight } from "lucide-react";
+import { Star, Trash2, Pencil, ArrowUpRight } from "lucide-react";
 import { categoryStyle, cn, faviconUrl, getHostname } from "@/lib/utils";
 import type { AppEntry } from "@/lib/types";
 
@@ -10,6 +10,7 @@ interface AppCardProps {
   favourited: boolean;
   onOpen: (app: AppEntry) => void;
   onToggleFavourite: (app: AppEntry) => void;
+  onEdit: (app: AppEntry) => void;
   onDelete: (app: AppEntry) => void;
   showCategory?: boolean;
 }
@@ -19,6 +20,7 @@ export function AppCard({
   favourited,
   onOpen,
   onToggleFavourite,
+  onEdit,
   onDelete,
   showCategory = true,
 }: AppCardProps) {
@@ -94,6 +96,14 @@ export function AppCard({
           )}
         >
           <Star size={15} fill={favourited ? "currentColor" : "none"} />
+        </button>
+        <button
+          type="button"
+          onClick={() => onEdit(app)}
+          aria-label={`Edit ${app.name}`}
+          className="flex h-7 w-7 items-center justify-center rounded-full text-muted opacity-0 transition-colors hover:bg-surface-hover hover:text-foreground group-hover:opacity-100 focus-visible:opacity-100 cursor-pointer"
+        >
+          <Pencil size={13} />
         </button>
         <button
           type="button"

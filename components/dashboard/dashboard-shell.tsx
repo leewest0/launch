@@ -31,9 +31,11 @@ export function DashboardShell({
   const [recentIds, setRecentIds] = useState(initialRecents);
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [editingApp, setEditingApp] = useState<AppEntry | null>(null);
 
   const searchRef = useRef<HTMLInputElement>(null);
+  const isAppModalOpen = addModalOpen || editingApp !== null;
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -45,13 +47,13 @@ export function DashboardShell({
         e.preventDefault();
         searchRef.current?.focus();
       }
-      if (e.key === "Escape" && !modalOpen && document.activeElement === searchRef.current) {
+      if (e.key === "Escape" && !isAppModalOpen && document.activeElement === searchRef.current) {
         setQuery("");
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [modalOpen]);
+  }, [isAppModalOpen]);
 
   const categories = useMemo(() => {
     const counts = new Map<string, number>();
@@ -175,11 +177,35 @@ export function DashboardShell({
     }
   }
 
+  async function handleEditApp(appId: string, input: NewAppInput): Promise<boolean> {
+    try {
+      const res = await fetch(`/api/apps/${appId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        push(data.error ?? "Couldn't save those changes.", "error");
+        return false;
+      }
+      const updated = data.app as AppEntry;
+      setApps((prev) =>
+        prev.map((a) => (a.id === appId ? updated : a)).sort((a, b) => a.name.localeCompare(b.name))
+      );
+      push(`Saved changes to "${updated.name}".`, "success");
+      return true;
+    } catch {
+      push("Couldn't reach the server. Try again.", "error");
+      return false;
+    }
+  }
+
   const isSearching = normalizedQuery.length > 0;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <TopNav user={user} onAddClick={() => setModalOpen(true)} />
+      <TopNav user={user} onAddClick={() => setAddModalOpen(true)} />
 
       <Hero
         query={query}
@@ -191,7 +217,7 @@ export function DashboardShell({
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-24 sm:px-6 lg:px-8">
         {apps.length === 0 ? (
-          <EmptyState variant="no-apps" onAddClick={() => setModalOpen(true)} />
+          <EmptyState variant="no-apps" onAddClick={() => setAddModalOpen(true)} />
         ) : isSearching ? (
           searchResults && searchResults.length > 0 ? (
             <AppGrid
@@ -199,13 +225,14 @@ export function DashboardShell({
               favouriteIds={favouriteIds}
               onOpen={handleOpen}
               onToggleFavourite={handleToggleFavourite}
+              onEdit={setEditingApp}
               onDelete={handleDelete}
             />
           ) : (
             <EmptyState
               variant="no-results"
               query={query.trim()}
-              onAddClick={() => setModalOpen(true)}
+              onAddClick={() => setAddModalOpen(true)}
             />
           )
         ) : (
@@ -225,6 +252,7 @@ export function DashboardShell({
                   favouriteIds={favouriteIds}
                   onOpen={handleOpen}
                   onToggleFavourite={handleToggleFavourite}
+                  onEdit={setEditingApp}
                   onDelete={handleDelete}
                 />
               </section>
@@ -238,6 +266,7 @@ export function DashboardShell({
                   favouriteIds={favouriteIds}
                   onOpen={handleOpen}
                   onToggleFavourite={handleToggleFavourite}
+                  onEdit={setEditingApp}
                   onDelete={handleDelete}
                 />
               </section>
@@ -251,6 +280,7 @@ export function DashboardShell({
                   favouriteIds={favouriteIds}
                   onOpen={handleOpen}
                   onToggleFavourite={handleToggleFavourite}
+                  onEdit={setEditingApp}
                   onDelete={handleDelete}
                   showCategory={false}
                 />
@@ -264,6 +294,7 @@ export function DashboardShell({
                     favouriteIds={favouriteIds}
                     onOpen={handleOpen}
                     onToggleFavourite={handleToggleFavourite}
+                    onEdit={setEditingApp}
                     onDelete={handleDelete}
                     showCategory={false}
                   />
@@ -275,11 +306,15 @@ export function DashboardShell({
       </main>
 
       <AddAppModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubmit={handleAddApp}
+        open={isAppModalOpen}
+        onClose={() => {
+          setAddModalOpen(false);
+          setEditingApp(null);
+        }}
+        onSubmit={editingApp ? (input) => handleEditApp(editingApp.id, input) : handleAddApp}
         existingCategories={categories.map((c) => c.name)}
         initialName={isSearching ? query.trim() : undefined}
+        editingApp={editingApp}
       />
     </div>
   );
