@@ -60,7 +60,10 @@ export function AppCard({
               className="shrink-0 text-muted opacity-0 transition-opacity group-hover:opacity-100"
             />
           </span>
-          <span className="mt-0.5 block truncate text-xs text-muted">
+          <span
+            title={getHostname(app.url)}
+            className="mt-0.5 block break-words text-xs text-muted"
+          >
             {getHostname(app.url)}
           </span>
           {app.description && (
