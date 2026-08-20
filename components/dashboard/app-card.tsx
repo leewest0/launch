@@ -54,13 +54,14 @@ export function AppCard({
         </span>
         <span className="min-w-0 flex-1">
           {/*
-            pr-8 always reserves just enough room for the always-visible favourite
-            star; it grows to pr-20 on hover to also clear the edit/delete icons,
-            which only render then. Keeps the name at near-full card width at rest
-            instead of a permanent, worst-case padding reservation squeezing every
-            card's title down to a couple of characters per line.
+            pr-9 reserves room for the favourite star when it's the only icon
+            showing (favourited, not hovered); it grows to pr-28 on hover, when
+            edit/delete join it and the icon row is at its full ~100px width.
+            The edit/delete buttons are `hidden` rather than just opacity-0 so
+            they don't silently claim layout space while invisible — that was
+            the bug: an invisible button still pushed the icon row's edge left.
           */}
-          <span className="flex items-start gap-1 pr-8 font-display text-sm font-semibold text-foreground transition-[padding] duration-150 group-hover:pr-20">
+          <span className="flex items-start gap-1 pr-9 font-display text-sm font-semibold text-foreground transition-[padding] duration-150 group-hover:pr-28">
             <span title={app.name} className="break-words">
               {app.name}
             </span>
@@ -101,10 +102,10 @@ export function AppCard({
           aria-label={favourited ? `Unfavourite ${app.name}` : `Favourite ${app.name}`}
           aria-pressed={favourited}
           className={cn(
-            "flex h-7 w-7 items-center justify-center rounded-full transition-all cursor-pointer",
+            "h-7 w-7 items-center justify-center rounded-full cursor-pointer",
             favourited
-              ? "text-amber-400 opacity-100"
-              : "text-muted opacity-0 hover:bg-surface-hover group-hover:opacity-100 focus-visible:opacity-100"
+              ? "flex text-amber-400"
+              : "hidden text-muted hover:bg-surface-hover group-hover:flex focus-visible:flex"
           )}
         >
           <Star size={15} fill={favourited ? "currentColor" : "none"} />
@@ -113,7 +114,7 @@ export function AppCard({
           type="button"
           onClick={() => onEdit(app)}
           aria-label={`Edit ${app.name}`}
-          className="flex h-7 w-7 items-center justify-center rounded-full text-muted opacity-0 transition-colors hover:bg-surface-hover hover:text-foreground group-hover:opacity-100 focus-visible:opacity-100 cursor-pointer"
+          className="hidden h-7 w-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-hover hover:text-foreground group-hover:flex focus-visible:flex cursor-pointer"
         >
           <Pencil size={13} />
         </button>
@@ -121,7 +122,7 @@ export function AppCard({
           type="button"
           onClick={() => onDelete(app)}
           aria-label={`Remove ${app.name}`}
-          className="flex h-7 w-7 items-center justify-center rounded-full text-muted opacity-0 transition-colors hover:bg-rose-500/10 hover:text-rose-500 group-hover:opacity-100 focus-visible:opacity-100 cursor-pointer"
+          className="hidden h-7 w-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-rose-500/10 hover:text-rose-500 group-hover:flex focus-visible:flex cursor-pointer"
         >
           <Trash2 size={14} />
         </button>
